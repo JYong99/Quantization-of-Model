@@ -1,23 +1,28 @@
 Prerequisites:
 1. Created a conda environment
-2. Installed CMake (conda install -c conda-forge cmake)
+2. Installed CMake (conda install -c conda-forge cmake -y)
 3. Installed Visual Studio 2022 with C++ development tools
-4. Installed cuda-toolkit (if using GPU) (conda install cuda-toolkit=12.6 cuda-nvcc=12.6 -c nvidia)
-5. SentencePiece installed (conda install -c conda-forge sentencepiece)
+4. Installed cuda-toolkit (if using GPU) (conda install cuda-toolkit=12.6 cuda-nvcc=12.6 -c nvidia -y)
+5. SentencePiece installed (conda install -c conda-forge sentencepiece -y)
+6. Curl Installed (conda install -c conda-forge libcurl -y)
+7. Copy cuda files to C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Microsoft\VC\v170\BuildCustomizations
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\extras\visual_studio_integration\MSBuildExtensions
 
 ### INSTRUCTIONS FOR SETTING UP LLAMA.CPP ON WINDOWS ###
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
 
 mkdir build2
-cd build2
 
 #CPU#
+cd build2
 cmake .. -G "Visual Studio 17 2022" -A x64
 cmake --build . --config Release
 
 #GPU#
 cmake -B build-gpu -DGGML_CUDA=ON
+# Specify Cuda Location
+cmake -B build-gpu -DGGML_CUDA=ON -DCMAKE_GENERATOR_TOOLSET="cuda=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6"
 cmake --build build-gpu --config Release
 
 cd ..
@@ -27,12 +32,12 @@ run the python script to download the model (download_model.py)
 
 cd llama.cpp
 
-python convert_hf_to_gguf.py --outtype f16 --outfile ../ggufs/smollm3-3B.gguf ../models/smollm3-3B
+python convert_hf_to_gguf.py --outtype f16 --outfile ../ggufs/Ministral-8B-Instruct-2410.gguf ../models/Ministral-8B-Instruct-2410
 
 ### QUANTIZATION ###
 cd build-gpu\bin\Release
-.\llama-quantize.exe ..\..\..\..\ggufs\smollm3-3B.gguf ..\..\..\..\ggufs\smollm3-3B.Q6_K.gguf Q6_K
-copy ..\..\..\..\ggufs\smollm3-3B.Q4_0.gguf C:\Users\Joel\Documents\Vscode\live_summary\models\
+.\llama-quantize.exe ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.gguf ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.Q4_K.gguf Q4_K
+copy ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.Q4_0.gguf C:\Users\Joel\Documents\Vscode\live_summary\models\
 
 ### Imatrix-QUANTIZATION ###
 run the imatrix quantization script (imatrix.py) to download dataset
