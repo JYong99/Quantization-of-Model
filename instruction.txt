@@ -12,10 +12,10 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\extras\visual_studio_in
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
 
-mkdir build2
+mkdir build-gpu
 
 #CPU#
-cd build2
+cd build-gpu
 cmake .. -G "Visual Studio 17 2022" -A x64
 cmake --build . --config Release
 
@@ -28,16 +28,15 @@ cmake --build build-gpu --config Release
 cd ..
 
 ### CONVERTING HF MODEL TO GGUF FORMAT ###
-run the python script to download the model (download_model.py)
+run the python script to download the model (download_model_LLM.py)
 
 cd llama.cpp
 
-python convert_hf_to_gguf.py --outtype f16 --outfile ../ggufs/Ministral-8B-Instruct-2410.gguf ../models/Ministral-8B-Instruct-2410
+python convert_hf_to_gguf.py --outtype f16 --outfile ../ggufs/Mistral-7B-Instruct-v0.3.gguf ../models/Mistral-7B-Instruct-v0.3
 
 ### QUANTIZATION ###
 cd build-gpu\bin\Release
 .\llama-quantize.exe ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.gguf ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.Q4_K.gguf Q4_K
-copy ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.Q4_0.gguf C:\Users\Joel\Documents\Vscode\live_summary\models\
 
 ### Imatrix-QUANTIZATION ###
 run the imatrix quantization script (imatrix.py) to download dataset
