@@ -1,0 +1,6 @@
+cd llama cpp
+docker build -t local/llama.cpp:server-cuda --target server -f .devops/cuda.Dockerfile .
+docker run --gpus all -v ./models:/models -p 8000:8000 local/llama.cpp:server-cuda -m /models/Ministral-3-3B-Instruct-BF16.gguf --port 8000 --host 0.0.0.0 -n 512 --n-gpu-layers 26
+
+
+docker build -t local/llama.cpp:server-cuda --target server -f ./cuda.Dockerfile .

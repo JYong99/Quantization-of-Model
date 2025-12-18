@@ -1,5 +1,6 @@
 ggufs/*
 llama.cpp/
 models/*
+models_og/*
 
 wiki.train.raw

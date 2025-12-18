@@ -20,6 +20,7 @@ cmake .. -G "Visual Studio 17 2022" -A x64
 cmake --build . --config Release
 
 #GPU#
+DO NOT cd into build-gpu folder
 cmake -B build-gpu -DGGML_CUDA=ON
 # Specify Cuda Location
 cmake -B build-gpu -DGGML_CUDA=ON -DCMAKE_GENERATOR_TOOLSET="cuda=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6"
@@ -29,14 +30,17 @@ cd ..
 
 ### CONVERTING HF MODEL TO GGUF FORMAT ###
 run the python script to download the model (download_model_LLM.py)
+or
+huggingface-cli download mistralai/Mistral-Small-3.2-24B-Instruct-2506 --local-dir ./mistral-small-3.2 --local-dir-use-symlinks False
 
 cd llama.cpp
 
-python convert_hf_to_gguf.py --outtype f16 --outfile ../ggufs/Mistral-7B-Instruct-v0.3.gguf ../models/Mistral-7B-Instruct-v0.3
+python convert_hf_to_gguf.py --outtype bf16 --outfile ../ggufs/Ministral-3-3B-Instruct.gguf ../models/Ministral-3-3B-Instruct
 
 ### QUANTIZATION ###
 cd build-gpu\bin\Release
-.\llama-quantize.exe ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.gguf ..\..\..\..\ggufs\Mistral-7B-Instruct-v0.3.Q4_K.gguf Q4_K
+.\llama-quantize.exe ..\..\..\..\ggufs\Ministral-3-3B-Instruct-BF16.gguf ..\..\..\..\ggufs\Ministral-3-3B-Instruct-BF16.Q4_K_M.gguf Q4_K_M
+.\llama-quantize.exe ..\..\..\..\ggufs\Magistral-Small-2509-BF16.gguf ..\..\..\..\ggufs\Magistral-Small-2509.Q2_K.gguf Q2_K
 
 ### Imatrix-QUANTIZATION ###
 run the imatrix quantization script (imatrix.py) to download dataset
@@ -103,7 +107,7 @@ cd ..
 # Convert the model to GGUF format (F16)
 python convert_hf_to_gguf.py --outfile ../qwen2.5-vl-7b.gguf --outtype f16 ../Qwen2.5-VL-7B-Instruct
 # Generate the multimodal projector
-python convert_hf_to_gguf.py --outfile ../mmproj-qwen2.5-vl-7b.gguf --outtype f16 --mmproj ../Qwen2.5-VL-7B-Instruct
+python convert_hf_to_gguf.py --outfile ../mmproj-Ministral-3-3B-Instruct.gguf --outtype f16 --mmproj ../Ministral-3-3B-Instruct-BF16
 
 cd build2/bin/Release
 ./llama-quantize.exe ../../../../qwen2.5-vl-7b.gguf ../../../../qwen2.5-vl-7b-q4_k.gguf q4_k
@@ -116,13 +120,16 @@ cd build2/bin/Release
 
 
 python .\convert_hf_to_gguf.py --print-supported-models
-Supported models:
+Supported models (b7329):
 TEXT models:
+  - AfmoeForCausalLM
+  - ApertusForCausalLM
   - ArceeForCausalLM
   - ArcticForCausalLM
   - BaiChuanForCausalLM
   - BaichuanForCausalLM
   - BailingMoeForCausalLM
+  - BailingMoeV2ForCausalLM
   - BambaForCausalLM
   - BertForMaskedLM
   - BertForSequenceClassification
@@ -136,6 +143,7 @@ TEXT models:
   - ChatGLMForConditionalGeneration
   - ChatGLMModel
   - CodeShellForCausalLM
+  - CogVLMForCausalLM
   - Cohere2ForCausalLM
   - CohereForCausalLM
   - DbrxForCausalLM
@@ -148,6 +156,7 @@ TEXT models:
   - DistilBertModel
   - Dots1ForCausalLM
   - DreamModel
+  - Ernie4_5ForCausalLM
   - Ernie4_5_ForCausalLM
   - Ernie4_5_MoeForCausalLM
   - Exaone4ForCausalLM
@@ -162,25 +171,39 @@ TEXT models:
   - Gemma2ForCausalLM
   - Gemma3ForCausalLM
   - Gemma3ForConditionalGeneration
+  - Gemma3TextModel
   - Gemma3nForConditionalGeneration
   - GemmaForCausalLM
   - Glm4ForCausalLM
+  - Glm4MoeForCausalLM
+  - Glm4vForConditionalGeneration
   - GlmForCausalLM
+  - GptOssForCausalLM
   - GraniteForCausalLM
   - GraniteMoeForCausalLM
   - GraniteMoeHybridForCausalLM
   - GraniteMoeSharedForCausalLM
+  - Grok1ForCausalLM
   - GrokForCausalLM
+  - GroveMoeForCausalLM
+  - HunYuanDenseV1ForCausalLM
   - HunYuanMoEV1ForCausalLM
   - InternLM2ForCausalLM
   - InternLM3ForCausalLM
   - JAISLMHeadModel
   - JambaForCausalLM
+  - JanusForConditionalGeneration
   - JinaBertForMaskedLM
   - JinaBertModel
+  - KimiVLForConditionalGeneration
   - LFM2ForCausalLM
+  - LLaDAMoEModel
+  - LLaDAMoEModelLM
+  - LLaDAModelLM
   - LLaMAForCausalLM
   - Lfm2ForCausalLM
+  - Lfm2MoeForCausalLM
+  - Llama4ForCausalLM
   - Llama4ForConditionalGeneration
   - LlamaForCausalLM
   - LlamaModel
@@ -193,22 +216,26 @@ TEXT models:
   - MambaLMHeadModel
   - MiniCPM3ForCausalLM
   - MiniCPMForCausalLM
+  - MiniMaxM2ForCausalLM
   - Mistral3ForConditionalGeneration
   - MistralForCausalLM
   - MixtralForCausalLM
   - NemotronForCausalLM
+  - NemotronHForCausalLM
   - NeoBERT
   - NeoBERTForSequenceClassification
   - NeoBERTLMHead
   - NomicBertModel
   - OLMoForCausalLM
   - Olmo2ForCausalLM
+  - Olmo3ForCausalLM
   - OlmoForCausalLM
   - OlmoeForCausalLM
   - OpenELMForCausalLM
   - OrionForCausalLM
   - PLMForCausalLM
   - PLaMo2ForCausalLM
+  - PanguEmbeddedForCausalLM
   - Phi3ForCausalLM
   - PhiForCausalLM
   - PhiMoEForCausalLM
@@ -225,6 +252,10 @@ TEXT models:
   - Qwen2_5_VLForConditionalGeneration
   - Qwen3ForCausalLM
   - Qwen3MoeForCausalLM
+  - Qwen3NextForCausalLM
+  - Qwen3VLForConditionalGeneration
+  - Qwen3VLMoeForConditionalGeneration
+  - RND1
   - RWForCausalLM
   - RWKV6Qwen2ForCausalLM
   - RWKV7ForCausalLM
@@ -233,6 +264,8 @@ TEXT models:
   - Rwkv6ForCausalLM
   - Rwkv7ForCausalLM
   - RwkvHybridForCausalLM
+  - SeedOssForCausalLM
+  - SmallThinkerForCausalLM
   - SmolLM3ForCausalLM
   - StableLMEpochForCausalLM
   - StableLmForCausalLM
@@ -241,16 +274,24 @@ TEXT models:
   - T5ForConditionalGeneration
   - T5WithLMHeadModel
   - UMT5ForConditionalGeneration
+  - UMT5Model
   - UltravoxModel
   - VLlama3ForCausalLM
+  - VoxtralForConditionalGeneration
   - WavTokenizerDec
   - XLMRobertaForSequenceClassification
   - XLMRobertaModel
   - XverseForCausalLM
+  - modeling_grove_moe.GroveMoeForCausalLM
 MMPROJ models:
+  - CogVLMForCausalLM
   - Gemma3ForConditionalGeneration
   - Idefics3ForConditionalGeneration
   - InternVisionModel
+  - JanusForConditionalGeneration
+  - KimiVLForConditionalGeneration
+  - Lfm2VlForConditionalGeneration
+  - LightOnOCRForConditionalGeneration
   - Llama4ForConditionalGeneration
   - LlavaForConditionalGeneration
   - Mistral3ForConditionalGeneration
@@ -259,5 +300,8 @@ MMPROJ models:
   - Qwen2VLModel
   - Qwen2_5OmniModel
   - Qwen2_5_VLForConditionalGeneration
+  - Qwen3VLForConditionalGeneration
+  - Qwen3VLMoeForConditionalGeneration
   - SmolVLMForConditionalGeneration
   - UltravoxModel
+  - VoxtralForConditionalGeneration
